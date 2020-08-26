@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  mysql-db:
+    image: mysql:8.0
+    ports:
+    - "33306:3306"
+    container_name: mysql-db
+    volumes:
+      - ./run/var:/var/lib/mysql
+      - ./docker-compose/mysql/script:/home/script
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'y'
+
+  laravel-app:
+    build:
+      context: '.'
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    container_name: laravel-app
+    volumes:
+      - .:/var/www/html
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+    - "8080:80"
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql-db
+      PMA_USER: root
+      PMA_PASSWORD:
